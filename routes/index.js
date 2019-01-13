@@ -58,7 +58,7 @@ router.get('/status', function(req, res) {
 			console.error('error:', error);
 			return;
 		}
-		res.send(stdout.split('\n')[0]);
+		res.send(stdout.split('\n')[0]);	// This is also bad
 	});
 });
 
