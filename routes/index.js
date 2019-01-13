@@ -18,14 +18,14 @@ function execute(command, res) {
 	});
 }
 
-router.get('/', function(req, res) {
+router.get('/', constants.isAdmin, function(req, res) {
 	res.render('index', {
 		admin : req.isAdmin,
 		owner : req.isOwner
 	});
 });
 
-router.get('/open', function(req, res) {
+router.get('/open', constants.isAdmin, function(req, res) {
 	let logEntry = req.query.entry + '\n';
 	var requestOptions = Object.assign({}, constants.portalToDinkle);
 	requestOptions.uri = requestOptions.uri+logEntry;
@@ -43,7 +43,7 @@ router.get('/open', function(req, res) {
 	res.end();
 });
 
-router.get('/close', function(req, res) {
+router.get('/close', constants.isAdmin, function(req, res) {
 	let logEntry = req.query.entry + '\n';
 	var requestOptions = Object.assign({}, constants.portalToDinkle);
 	requestOptions.uri = requestOptions.uri+logEntry;
