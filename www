@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const 	constants = require('./constants'),
-		https = require('https');
+const constants = require('./constants'),
+    https = require('https');
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
@@ -19,7 +19,7 @@ app.use(function (req, res, next) {
     let incoming = req.connection.getPeerCertificate().subject.CN;
     console.log("Incoming request...");
     console.log("   CN: " + incoming);
-    console.log("   URL: "+req.originalUrl);
+    console.log("   URL: " + req.originalUrl);
     req.isAdmin = constants.admins.includes(incoming);
     req.isOwner = constants.owner.includes(incoming);
     req.commonName = incoming;
@@ -35,9 +35,9 @@ server.listen(constants.port);
 server.on('listening', onListening);
 
 function onListening() {
-	var addr = server.address();
-	var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-	console.log('Listening on ' + bind);
+    var addr = server.address();
+    var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+    console.log('Listening on ' + bind);
 }
 
 module.exports = app;

@@ -1,55 +1,65 @@
-const 	express = require('express');
+const express = require('express');
 const router = express.Router();
 const exec = require('child_process').exec;
-let lightOneStatus = true, lightTwoStatus = true;
+const statusPath = '/home/pi/login/logs/status.txt';
+const logPath = '/home/pi/login/logs/portalLog.txt';
 
 router.get('/', function(req, res) {
-    res.render('index', {
-        admin : req.isAdmin,
-        owner : req.isOwner
-    });
+	res.render('index', {
+		admin : req.isAdmin,
+		owner : req.isOwner
+	});
 });
 
-function execute(command){
-    exec(command, function (error, stdOut, stdErr) {
-        return stdOut;
-    });
+function execute(command, res) {
+	exec(command, function(error, stdout, stderr) {
+		if (error) {
+			console.error('error:', error);
+			return;
+		}
+		//console.log(stdout);
+		if(res)
+			res.send(stdout.split('\n').reverse());
+		else 
+			return;
+	});
 }
 
-//Toggle light 1
-router.get('/light1', function(req, res) {
-    if(req.query.status == "true"){
-        execute("echo 24 > /sys/class/gpio/export");
-        execute("echo out > /sys/class/gpio/gpio24/direction");
-        execute("echo 18 > /sys/class/gpio/export");
-        execute("echo out > /sys/class/gpio/gpio18/direction");
-        execute("echo 1 > /sys/class/gpio/gpio18/value");
-    } else {
-        execute("echo 0 > /sys/class/gpio/gpio24/value");
-        execute("echo 24 > /sys/class/gpio/unexport");
-        execute("echo 0 > /sys/class/gpio/gpio24/value");
-        execute("echo 24 > /sys/class/gpio/unexport");
-    }
-    lightOneStatus = req.query.status;
-    res.end();
+router.get('/open', function(req, res) {
+	let logEntry = req.query.entry;
+	execute("/usr/bin/python /home/pi/scripts/unlock.py");
+	execute("echo '" + logEntry + "' >> " + logPath); //TODO: This is extremely bad
+	execute("echo 'Opened' > " + statusPath);
+	console.log(logEntry);
+	res.end();
 });
 
-//Toggle light 2
-router.get('/light2', function(req, res) {
-    if(req.query.status == "true"){
-        execute("echo 25 > /sys/class/gpio/export");
-        execute("echo out > /sys/class/gpio/gpio25/direction");
-    } else {
-        execute("echo 0 > /sys/class/gpio/gpio25/value");
-        execute("echo 25 > /sys/class/gpio/unexport");
-    }
-    lightTwoStatus = req.query.status;
-    res.end();
+router.get('/close', function(req, res) {
+	let logEntry = req.query.entry;
+	execute("/usr/bin/python /home/pi/scripts/lock.py");
+	execute("echo '" + logEntry + "' >> " + logPath);
+	execute("echo 'Closed' > " + statusPath);
+	console.log(logEntry);
+	res.end();
 });
 
-//Return current state
+router.get('/log', function(req, res) {
+	let cmd = "cat " + logPath;
+	console.log(cmd);
+	execute(cmd, res);
+});
+
 router.get('/status', function(req, res) {
-   res.send({light1: lightOneStatus, light2: lightTwoStatus});
+	let cmd = "cat " + statusPath;
+	console.log(cmd);
+
+	exec(cmd, function(error, stdout, stderr) {
+		if (error) {
+			console.error('error:', error);
+			return;
+		}
+		res.send(stdout.split('\n')[0]);
+	});
 });
 
 module.exports = router;
