@@ -1,0 +1,52 @@
+<html>
+<title id="title">Lights</title>
+<!--<script src="/Controller.js"></script>-->
+<!--<script src="/header.js"></script>-->
+
+<body class="mainBackground">
+	<% if(owner) { %>
+	<!--<script src="/ownerNav.js"></script>-->
+	<% } else if(admin) { %>
+	<!--<script src="/adminNav.js"></script>-->
+	<% } else { %>
+	<!--<script src="/userNav.js"></script>-->
+	<% } %>
+	<!--<script src="/sideBar.js"></script>-->
+	<div align="center">
+		<iframe width="0" height="0" border="0" name="dummyframe"
+                id="dummyframe" style="width:0; height:0; border:none" ></iframe>
+        <div>
+            <br>
+            <div style="float: left;width:50%;">
+                Light 1
+                <div id="lightStatus1" style="float: left; width:100%;"></div>
+                <br><br><br><br>
+                <form action="/light1" target="dummyframe">
+                    <input type="hidden" name="status" value="true" />
+                    <br><input type="submit" value="ON" height="70" style="width: 100%;">
+                </form>
+                <form action="/light1" target="dummyframe">
+                    <input type="hidden" name="status" value="false" />
+                    <br><input type="submit" value="OFF" height="70" style="width: 100%;">
+                </form>
+            </div>
+            <div style="float: right;width:50%;">
+                Light 2
+                <div id="lightStatus2" style="float: right; width:100%;"></div>
+                <br><br><br><br>
+                <form action="/light2" target="dummyframe">
+                    <input type="hidden" name="status" value="true" />
+                    <br><input type="submit" value="ON" height="70" style="width:100%;">
+                </form>
+                <form action="/light2" target="dummyframe">
+                    <input type="hidden" name="status" value="false" />
+                    <br><input type="submit" value="OFF" height="70" style="width: 100%;">
+                </form>
+            </div>
+        </div>
+
+		<br>
+	</div>
+</body>
+
+</html>

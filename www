@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+
+const 	constants = require('./constants'),
+		https = require('https');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const app = express();
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'node_modules')));
+app.use(favicon(__dirname + '/public/fav.jpg'));
+app.use(function (req, res, next) {
+    let incoming = req.connection.getPeerCertificate().subject.CN;
+    console.log("Incoming request...");
+    console.log("   CN: " + incoming);
+    console.log("   URL: "+req.originalUrl);
+    req.isAdmin = constants.admins.includes(incoming);
+    req.isOwner = constants.owner.includes(incoming);
+    req.commonName = incoming;
+    next();
+})
+
+const index = require('./routes/index');
+app.use('/', index);
+
+const server = https.createServer(constants.sslOptions, app);
+
+server.listen(constants.port);
+server.on('listening', onListening);
+
+function onListening() {
+	var addr = server.address();
+	var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+	console.log('Listening on ' + bind);
+}
+
+module.exports = app;
