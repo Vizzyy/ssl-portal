@@ -22,6 +22,26 @@ const sslPath = '/home/pi/login/ssl/',
         cert: mainSSL.cert,
         ca: ca,
         rejectUnauthorized: true
+    },
+    isAdmin = function(req, res, next){
+        let incoming = req.connection.getPeerCertificate().subject.CN;
+        if(admins.includes(incoming)){
+            next();
+        } else {
+            console.log(incoming+" has insufficient permissions to view "+req.originalUrl);
+            res.status(500);
+            res.send("You have insufficient permissions to view this page.");
+        }
+    },
+    isOwner = function(req, res, next){
+        let incoming = req.connection.getPeerCertificate().subject.CN;
+        if(owner.includes(incoming)){
+            next();
+        } else {
+            console.log(incoming+" has insufficient permissions to view "+req.originalUrl);
+            res.status(500);
+            res.send("You have insufficient permissions to view this page.");
+        }
     };
 
 module.exports = {
@@ -29,5 +49,7 @@ module.exports = {
     portalToDinkle: portalToDinkle,
     port: 443,
     admins: admins,
-    owner: owner
+    owner: owner,
+    isAdmin: isAdmin,
+    isOwner: isOwner
 };

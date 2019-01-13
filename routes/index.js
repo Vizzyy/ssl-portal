@@ -1,17 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const exec = require('child_process').exec;
-const statusPath = '/home/pi/login/logs/status.txt';
-const fs = require('fs'),
-	rp = require('request-promise');
-const constants = require('../constants');
-
-router.get('/', function(req, res) {
-	res.render('index', {
-		admin : req.isAdmin,
-		owner : req.isOwner
-	});
-});
+const express = require('express'),
+	router = express.Router(),
+	exec = require('child_process').exec,
+	statusPath = '/home/pi/login/logs/status.txt',
+	rp = require('request-promise'),
+	constants = require('../constants');
 
 function execute(command, res) {
 	exec(command, function(error, stdout, stderr) {
@@ -25,6 +17,13 @@ function execute(command, res) {
 			return stdout;
 	});
 }
+
+router.get('/', function(req, res) {
+	res.render('index', {
+		admin : req.isAdmin,
+		owner : req.isOwner
+	});
+});
 
 router.get('/open', function(req, res) {
 	let logEntry = req.query.entry + '\n';
@@ -62,7 +61,7 @@ router.get('/close', function(req, res) {
 	res.end();
 });
 
-router.get('/status', function(req, res) {
+router.get('/status', constants.isAdmin, function(req, res) {
 	let cmd = "cat " + statusPath;
 	console.log(cmd);
 	execute(cmd, res);
