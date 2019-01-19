@@ -4,4 +4,4 @@
 
 To run: `sudo node www`
 
-`./keygen` to generate your own certs to put into `ssl/`
+`./keygen <hostname of this server>` to generate your own certs to put into `ssl/` The parameter should be the hostname of the machine that will be running this webserver. The CN:OU of the certificate will be this value: `<hostname>:<hostname>`
