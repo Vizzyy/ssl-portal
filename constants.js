@@ -1,6 +1,6 @@
 const sslPath = '/home/pi/login/ssl/',
     fs = require('fs'),
-    admins = ["vizzyy-ddns-net-barney", "dinkleToPortal"],
+    admins = ["vizzyy-ddns-net-barney", "dinkleToPortal", "portal"],
     owner = ["vizzyy-ddns-net-barney"],
     ca = [
         fs.readFileSync(sslPath + 'vizzyy-ddns-net-barney.crt'),
