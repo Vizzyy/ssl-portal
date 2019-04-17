@@ -1,11 +1,7 @@
 #!/bin/sh
 
 mkdir $1
-openssl req -nodes -new -x509 -keyout $1/$1.key -out $1/$1.crt -subj "/CN=$1/OU=$1"
-#openssl genrsa -aes256 -out $1/$1.key 2048
-#openssl req -x509 -new -nodes -key $1/$1.key -sha256 -days 1024 -out $1/$1.crt
-#keytool -import -file $1/$1.crt -alias $1/$1 -keystore $1/$1.jks
+openssl req -nodes -new -x509 -days 1000 -sha256 -newkey rsa:2048 -keyout $1/$1.key -out $1/$1.crt -subj "/CN=$1/OU=$1"
 echo "Packaging into p12 file..."
-openssl pkcs12 -export -in $1/$1.crt -inkey $1/$1.key -certfile $1/$1.crt -out $1/$1.p12
+openssl pkcs12 -export -passout pass:changeit -in $1/$1.crt -inkey $1/$1.key -certfile $1/$1.crt -out $1/$1.p12
 echo "All done!"
-
